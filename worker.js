@@ -23,22 +23,22 @@ Réponds de façon claire, naturelle et structurée, comme un assistant conversa
 
 const buckets = new Map();
 
-function corsHeaders() {
+function securityHeaders(extra = {}) {
   return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type"
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store, private",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), geolocation=(), payment=()",
+    ...extra
   };
 }
 
 function json(data, status = 200, extra = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      ...corsHeaders(),
-      ...extra
-    }
+    headers: securityHeaders(extra)
   });
 }
 
@@ -57,7 +57,7 @@ function newSessionId() {
 }
 
 function sessionCookie(id) {
-  return `amour_session=${encodeURIComponent(id)}; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Lax`;
+  return `amour_session=${encodeURIComponent(id)}; Path=/; Max-Age=31536000; HttpOnly; Secure; SameSite=Strict`;
 }
 
 function getOrCreateSession(request) {
@@ -332,7 +332,13 @@ export default {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS" && (url.pathname === "/api/chat" || url.pathname === "/api/conversations")) {
-      return new Response(null, { status: 204, headers: corsHeaders() });
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Cache-Control": "no-store, private",
+          "X-Content-Type-Options": "nosniff"
+        }
+      });
     }
 
     try {
@@ -345,7 +351,17 @@ export default {
         return await handleConversations(request, env);
       }
 
-      return env.ASSETS.fetch(request);
+      const asset = await env.ASSETS.fetch(request);
+      const headers = new Headers(asset.headers);
+      headers.set("X-Content-Type-Options", "nosniff");
+      headers.set("X-Frame-Options", "DENY");
+      headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+      headers.set("Permissions-Policy", "camera=(), geolocation=(), payment=()");
+      return new Response(asset.body, {
+        status: asset.status,
+        statusText: asset.statusText,
+        headers
+      });
     } catch (error) {
       console.error("amour_ai_backend_error", error);
       if (String(error?.message || "").includes("SUPABASE_NOT_CONFIGURED")) {
