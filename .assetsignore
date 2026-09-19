@@ -1,0 +1,8 @@
+.git/
+.github/
+.wrangler/
+wrangler.json
+wrangler.toml
+wrangler.jsonc
+.env
+.env.*
