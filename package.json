@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "echo \"L'univers d'amour: static assets ready for Cloudflare Workers\""
+  }
+}
