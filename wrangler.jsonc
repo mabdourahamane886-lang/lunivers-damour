@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/wrangler/config-schema.json",
-  "name": "lunivers-damour",
+  "name": "luniversdamour",
   "compatibility_date": "2026-09-19",
   "assets": {
     "directory": "."
