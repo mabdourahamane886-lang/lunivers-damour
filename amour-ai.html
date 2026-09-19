@@ -225,6 +225,7 @@
 
     let conversationId = null;
     let busy = false;
+    const ACTIVE_CONVERSATION_KEY = "amour_ai_active_conversation";
 
     function setError(message){
       emptyState.style.display = "flex";
@@ -252,6 +253,17 @@
         throw error;
       }
       return data;
+    }
+
+    function saveActiveConversation(){
+      try{
+        if(conversationId) localStorage.setItem(ACTIVE_CONVERSATION_KEY, conversationId);
+        else localStorage.removeItem(ACTIVE_CONVERSATION_KEY);
+      }catch{}
+    }
+
+    function getSavedConversationId(){
+      try{return localStorage.getItem(ACTIVE_CONVERSATION_KEY) || "";}catch{return "";}
     }
 
     function renderHistory(conversations){
@@ -288,6 +300,7 @@
       try{
         const data = await api("/api/conversations?id=" + encodeURIComponent(id));
         conversationId = data.conversation.id;
+        saveActiveConversation();
         turns.innerHTML = "";
         const items = data.messages || [];
         emptyState.style.display = items.length ? "none" : "flex";
@@ -363,6 +376,7 @@
 
     function resetChat(){
       conversationId = null;
+      saveActiveConversation();
       clearMessages();
       input.value = "";
       autoResize();
@@ -410,6 +424,7 @@
         });
 
         conversationId = data.conversationId || conversationId;
+        saveActiveConversation();
         loading.querySelector(".turn-text").textContent = data.reply || "Je n’ai pas pu répondre.";
         await loadHistory();
       }catch(error){
@@ -483,8 +498,23 @@
       alert("Les pièces jointes seront activées dans une prochaine version.");
     });
 
-    loadHistory();
-    sendBtn.disabled = true;
+    async function boot(){
+      sendBtn.disabled = true;
+      await loadHistory();
+      const savedId = getSavedConversationId();
+      if(savedId){
+        try{
+          await restoreConversation(savedId);
+          return;
+        }catch{}
+      }
+      const firstConversation = document.querySelector("#historyDesktop .history-item");
+      if(firstConversation){
+        // Keep the interface ready for a new discussion unless a conversation was explicitly saved.
+      }
+    }
+
+    boot();
   </script>
 </body>
 </html>
