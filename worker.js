@@ -85,6 +85,28 @@ async function supabase(env, path, init = {}) {
   return response;
 }
 
+
+async function searchKnowledge(env, query) {
+  const safeQuery = String(query || "").trim().slice(0, 500);
+  if (!safeQuery) return [];
+
+  const response = await supabase(env, "rpc/amour_ai_search_knowledge", {
+    method: "POST",
+    body: JSON.stringify({ query_text: safeQuery, max_results: 8 })
+  });
+  if (!response.ok) throw new Error(`SUPABASE_SEARCH_KNOWLEDGE_${response.status}`);
+  const rows = await response.json();
+  return Array.isArray(rows) ? rows : [];
+}
+
+function formatKnowledgeContext(rows) {
+  if (!rows.length) return "";
+  return rows
+    .slice(0, 8)
+    .map((item, index) => `[${index + 1}] ${item.title}\n${item.content}`)
+    .join("\n\n");
+}
+
 async function createConversation(env, sessionId, title = "Nouvelle conversation") {
   const response = await supabase(env, "amour_ai_conversations", {
     method: "POST",
@@ -255,9 +277,21 @@ async function handleChat(request, env) {
     content: item.content
   }));
 
+  let knowledgeContext = "";
+  try {
+    const knowledge = await searchKnowledge(env, text);
+    knowledgeContext = formatKnowledgeContext(knowledge);
+  } catch (error) {
+    console.error("amour_ai_knowledge_search_error", error);
+  }
+
+  const systemContent = knowledgeContext
+    ? `${SYSTEM_PROMPT}\n\nBASE DE CONNAISSANCES AMOUR AI (à utiliser pour enrichir la réponse) :\n${knowledgeContext}\n\nUtilise cette base comme contexte utile, sans inventer de faits et sans présenter son contenu comme une certitude quand le contexte ne le permet pas.`
+    : SYSTEM_PROMPT;
+
   const result = await env.AI.run(
     MODEL,
-    { messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages] },
+    { messages: [{ role: "system", content: systemContent }, ...messages] },
     { rejectIfBusy: true }
   );
 
