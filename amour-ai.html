@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f0ea">
+  <title>Amour AI — L’univers d’amour</title>
+  <meta name="description" content="Amour AI de L’univers d’amour : un assistant pour écrire, comprendre, reformuler et trouver les bons mots.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4f0ea;--surface:#fffdf9;--soft:#eee9e1;--ink:#171514;--muted:#766f69;
+      --line:#e4ddd5;--accent:#8469e8;--accent2:#ec9ab6;--dark:#22202a;--max:1120px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:"DM Sans",sans-serif;color:var(--ink)}
+    body{
+      background:
+        radial-gradient(circle at 5% 0%,rgba(132,105,232,.13),transparent 26%),
+        radial-gradient(circle at 95% 15%,rgba(236,154,182,.17),transparent 23%),var(--bg)
+    }
+    a{text-decoration:none;color:inherit}
+    button,textarea{font:inherit}
+    button{border:0;cursor:pointer}
+    .wrap{width:min(var(--max),92%);margin:auto}
+    .top{height:72px;border-bottom:1px solid var(--line);background:rgba(244,240,234,.84);backdrop-filter:blur(18px);display:flex;align-items:center}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:800}
+    .brand-mark{width:38px;height:38px;border-radius:12px;background:var(--ink);color:#fff;display:grid;place-items:center}
+    .brand small{display:block;font-size:9px;color:var(--muted);font-weight:600;margin-top:2px}
+    .navlinks{display:flex;gap:22px;font-size:11px;font-weight:700;color:#57504b}
+    .navlinks a:hover{color:var(--accent)}
+    .back{padding:10px 13px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-size:10px;font-weight:800}
+    .hero{padding:52px 0 24px}
+    .hero-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:42px;align-items:center}
+    .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:#6f5cc4;font-weight:800}
+    h1,h2,h3{font-family:"Playfair Display",serif}
+    h1{font-size:clamp(45px,6.5vw,76px);line-height:.98;letter-spacing:-.045em;margin:13px 0 17px}
+    h1 span{color:var(--accent)}
+    .lead{font-size:13px;color:var(--muted);line-height:1.85;max-width:520px;margin:0}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+    .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.55);font-size:9px;color:#6a625d}
+    .app{
+      border:1px solid #ded7cf;border-radius:30px;background:#fbfaf7;box-shadow:0 30px 90px rgba(34,32,42,.14);overflow:hidden;
+      min-height:660px;display:flex;flex-direction:column;
+    }
+    .apphead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:#fffdfa}
+    .app-title{display:flex;align-items:center;gap:10px}
+    .avatar{width:38px;height:38px;border-radius:12px;background:var(--dark);color:#fff;display:grid;place-items:center}
+    .app-title strong{display:block;font-size:11px}.app-title span{display:block;color:var(--muted);font-size:8px;margin-top:2px}
+    .free{font-size:8px;color:#665f5a}.free b{color:var(--accent)}
+    .messages{flex:1;padding:18px;overflow:auto}
+    .welcome{
+      max-width:520px;margin:22px auto 28px;padding:24px;border:1px solid var(--line);border-radius:22px;background:rgba(255,253,249,.75);text-align:center
+    }
+    .welcome .big{width:54px;height:54px;border-radius:17px;background:var(--ink);color:#fff;display:grid;place-items:center;margin:0 auto 13px;font-size:20px}
+    .welcome h2{font-size:24px;margin:0 0 7px}.welcome p{font-size:9px;line-height:1.75;color:var(--muted);margin:0}
+    .msg{max-width:78%;padding:11px 12px;border-radius:15px;font-size:9px;line-height:1.7;margin:9px 0;white-space:pre-wrap}
+    .msg.ai{background:#ece8e2;color:#4c4743}.msg.user{margin-left:auto;background:#26242c;color:#fff}
+    .suggestions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}
+    .suggestion{padding:8px 9px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:8px;color:#5c554f}
+    .composer{padding:12px;border-top:1px solid var(--line);background:#fffdfa}
+    .form{display:flex;gap:8px}
+    textarea{flex:1;min-height:48px;max-height:130px;resize:none;border:1px solid var(--line);border-radius:14px;background:#f6f2ec;padding:11px;outline:0;font-size:10px}
+    .send{width:48px;border-radius:14px;background:var(--dark);color:#fff;font-size:18px}
+    .disclaimer{text-align:center;color:#9b938d;font-size:7px;margin-top:7px}
+    .features{padding:32px 0 80px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{padding:20px;border:1px solid var(--line);border-radius:20px;background:rgba(255,253,249,.78)}
+    .card i{font-style:normal;font-size:22px}.card h3{font-size:19px;margin:15px 0 7px}.card p{font-size:9px;line-height:1.75;color:var(--muted);margin:0}
+    footer{padding:25px 0;border-top:1px solid var(--line);color:var(--muted);font-size:8px}
+    @media(max-width:860px){.hero-grid{grid-template-columns:1fr}.navlinks{display:none}}
+    @media(max-width:620px){.hero{padding-top:34px}.app{min-height:590px}.grid{grid-template-columns:1fr}.msg{max-width:88%}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap nav">
+      <a class="brand" href="/">
+        <div class="brand-mark">♥</div>
+        <div>L’univers d’amour<small>Amour AI</small></div>
+      </a>
+      <nav class="navlinks">
+        <a href="/">Accueil</a>
+        <a href="/#experiences">Expériences</a>
+        <a href="/#histoires">Histoires</a>
+        <a href="/#communaute">Communauté</a>
+      </nav>
+      <a class="back" href="/">← Retour au site</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">✦ Assistant intelligent</div>
+          <h1>Voici <span>Amour AI.</span></h1>
+          <p class="lead">
+            Une nouvelle façon d’échanger avec L’univers d’amour. Écris ce que tu ressens,
+            demande de l’aide pour formuler un message, raconte une situation ou cherche
+            simplement les bons mots.
+          </p>
+          <div class="chips">
+            <span class="chip">Messages romantiques</span>
+            <span class="chip">Conseils relationnels</span>
+            <span class="chip">Reformulation</span>
+            <span class="chip">Idées de conversations</span>
+            <span class="chip">Français</span>
+          </div>
+        </div>
+
+        <section class="app" aria-label="Chat Amour AI">
+          <div class="apphead">
+            <div class="app-title">
+              <div class="avatar">♥</div>
+              <div><strong>Amour AI</strong><span>Assistant de L’univers d’amour</span></div>
+            </div>
+            <div class="free">Plan gratuit · <b>Actif</b></div>
+          </div>
+
+          <div class="messages" id="messages">
+            <div class="welcome">
+              <div class="big">♥</div>
+              <h2>Bonjour 👋</h2>
+              <p>Je peux t’aider à trouver les bons mots, comprendre une situation ou créer un message qui te ressemble.</p>
+              <div class="suggestions">
+                <button class="suggestion" data-prompt="Écris-moi un message doux pour dire à quelqu’un qu’il me manque.">Dire « tu me manques »</button>
+                <button class="suggestion" data-prompt="Comment faire une conversation calme après une dispute ?">Après une dispute</button>
+                <button class="suggestion" data-prompt="Aide-moi à écrire une déclaration d’amour simple et sincère.">Déclaration d’amour</button>
+              </div>
+            </div>
+            <div class="msg ai">Je suis là. 💜 Qu’aimerais-tu me dire aujourd’hui ?</div>
+          </div>
+
+          <div class="composer">
+            <form class="form" id="form">
+              <textarea id="input" rows="1" placeholder="Écris ton message…"></textarea>
+              <button class="send" aria-label="Envoyer">↑</button>
+            </form>
+            <div class="disclaimer">Ne partage pas de mots de passe ou d’informations sensibles.</div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="wrap grid">
+        <article class="card"><i>✦</i><h3>Écrire</h3><p>Transforme une idée ou une émotion en message naturel, élégant et prêt à envoyer.</p></article>
+        <article class="card"><i>♡</i><h3>Comprendre</h3><p>Décris une situation et demande une lecture simple, nuancée et centrée sur la communication.</p></article>
+        <article class="card"><i>◌</i><h3>Imaginer</h3><p>Crée des idées de conversations, des petits mots, des textes romantiques ou des réponses délicates.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap">© 2026 L’univers d’amour — Amour AI.</div></footer>
+
+  <script>
+    const list = document.getElementById("messages");
+    const input = document.getElementById("input");
+    const form = document.getElementById("form");
+    const history = [];
+
+    function add(role, text) {
+      const div = document.createElement("div");
+      div.className = "msg " + role;
+      div.textContent = text;
+      list.appendChild(div);
+      list.scrollTop = list.scrollHeight;
+      return div;
+    }
+
+    async function send(text) {
+      text = String(text || "").trim();
+      if (!text) return;
+
+      add("user", text);
+      input.value = "";
+      history.push({ role:"user", content:text });
+
+      const loader = add("ai", "Je réfléchis…");
+
+      try {
+        const response = await fetch("/api/chat", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({ messages: history.slice(-8) })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data?.message || data?.error || "Erreur");
+
+        const reply = data?.reply || data?.result?.reply || data?.data?.reply || "";
+        if (!reply) throw new Error("EMPTY_RESPONSE");
+
+        loader.remove();
+        add("ai", reply);
+        history.push({ role:"assistant", content:reply });
+      } catch (error) {
+        loader.textContent = "Amour AI est momentanément indisponible. Réessaie dans quelques instants.";
+        console.error(error);
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      send(input.value);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    });
+
+    document.querySelectorAll(".suggestion").forEach((button) => {
+      button.addEventListener("click", () => send(button.dataset.prompt));
+    });
+  </script>
+</body>
+</html>
