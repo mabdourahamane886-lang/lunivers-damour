@@ -1,1115 +1,619 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>L’univers d’amour ❤️ — Citations, histoires, messages et inspiration</title>
-  <meta name="description" content="Découvrez L’univers d’amour : citations romantiques, histoires d’amour, messages, conseils pour couples et contenus inspirants." />
-  <meta name="theme-color" content="#160d25" />
-
-  <meta property="og:title" content="L’univers d’amour ❤️" />
-  <meta property="og:description" content="Là où les émotions deviennent des histoires." />
-  <meta property="og:type" content="website" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f0ea">
+  <title>L’univers d’amour — L’espace digital pour aimer mieux</title>
+  <meta name="description" content="L’univers d’amour : inspirations, conseils, messages et Amour AI pour comprendre, créer et partager autrement.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --bg: #10091c;
-      --bg-soft: #1b102b;
-      --pink: #ff4f91;
-      --pink-light: #ff99bd;
-      --violet: #9e72ff;
-      --red: #ff365f;
-      --green: #25d366;
-      --white: #fff8fc;
-      --muted: #d8cbdc;
-      --glass: rgba(255, 255, 255, .10);
-      --border: rgba(255, 255, 255, .18);
-      --shadow: 0 25px 80px rgba(0, 0, 0, .35);
+    :root{
+      --bg:#f4f0ea;
+      --surface:#fffdf9;
+      --surface-2:#eee9e1;
+      --ink:#171514;
+      --muted:#766f69;
+      --line:#e4ddd5;
+      --accent:#8469e8;
+      --accent-2:#ec9ab6;
+      --accent-3:#a9cdb7;
+      --dark:#22202a;
+      --shadow:0 26px 70px rgba(34,32,42,.10);
+      --radius-xl:32px;
+      --radius-lg:24px;
+      --max:1180px;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--white);
-      font-family: "DM Sans", sans-serif;
-      overflow-x: hidden;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-      border: 0;
-    }
-
-    #liquidCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: -5;
-      width: 100%;
-      height: 100%;
-    }
-
-    .overlay {
-      position: fixed;
-      inset: 0;
-      z-index: -4;
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"DM Sans",sans-serif;
+      color:var(--ink);
       background:
-        radial-gradient(circle at 20% 20%, rgba(255, 47, 115, .18), transparent 30%),
-        radial-gradient(circle at 80% 30%, rgba(139, 88, 255, .2), transparent 28%),
-        linear-gradient(180deg, rgba(16, 9, 28, .2), rgba(16, 9, 28, .95));
-      pointer-events: none;
-    }
-
-    .container {
-      width: min(1180px, 92%);
-      margin: auto;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 20;
-      padding: 18px 0;
-      background: rgba(16, 9, 28, .55);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(255,255,255,.08);
-    }
-
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 25px;
-    }
-
-    .logo {
-      font-weight: 800;
-      white-space: nowrap;
-      letter-spacing: -.5px;
-    }
-
-    .logo span {
-      color: var(--pink-light);
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      font-size: .88rem;
-      color: var(--muted);
-    }
-
-    .nav-links a {
-      transition: .3s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--pink-light);
-    }
-
-    .whatsapp-btn,
-    .primary-btn,
-    .secondary-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      border-radius: 999px;
-      padding: 13px 20px;
-      font-weight: 700;
-      transition: transform .3s ease, box-shadow .3s ease;
-    }
-
-    .whatsapp-btn {
-      background: var(--green);
-      color: #061d0e;
-    }
-
-    .primary-btn {
-      color: white;
-      background: linear-gradient(135deg, var(--pink), var(--red));
-      box-shadow: 0 10px 35px rgba(255, 54, 95, .35);
-    }
-
-    .secondary-btn {
-      color: white;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.08);
-      backdrop-filter: blur(10px);
-    }
-
-    .primary-btn:hover,
-    .secondary-btn:hover,
-    .whatsapp-btn:hover {
-      transform: translateY(-4px);
-    }
-
-    .menu-toggle {
-      display: none;
-      color: white;
-      background: transparent;
-      font-size: 1.6rem;
-    }
-
-    section {
-      padding: 105px 0;
-      position: relative;
-    }
-
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 150px;
-    }
-
-    .hero-content {
-      max-width: 760px;
-    }
-
-    .eyebrow {
-      display: inline-block;
-      color: var(--pink-light);
-      font-weight: 700;
-      margin-bottom: 18px;
-      letter-spacing: .5px;
-    }
-
-    h1,
-    h2,
-    h3 {
-      font-family: "Playfair Display", serif;
-    }
-
-    h1 {
-      font-size: clamp(3rem, 8vw, 7rem);
-      line-height: .98;
-      margin-bottom: 25px;
-    }
-
-    h1 span,
-    h2 span {
-      color: var(--pink-light);
-    }
-
-    .hero p {
-      max-width: 650px;
-      color: var(--muted);
-      font-size: 1.12rem;
-      line-height: 1.8;
-      margin-bottom: 30px;
-    }
-
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-    }
-
-    .floating-hearts {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .heart {
-      position: absolute;
-      bottom: -50px;
-      color: var(--pink-light);
-      opacity: .55;
-      animation: floatUp linear infinite;
-      filter: drop-shadow(0 0 12px var(--pink));
-    }
-
-    @keyframes floatUp {
-      from {
-        transform: translateY(0) rotate(0deg) scale(.8);
-        opacity: 0;
-      }
-      15% { opacity: .65; }
-      to {
-        transform: translateY(-115vh) rotate(360deg) scale(1.4);
-        opacity: 0;
-      }
-    }
-
-    .section-heading {
-      text-align: center;
-      max-width: 680px;
-      margin: 0 auto 45px;
-    }
-
-    .section-heading h2 {
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      margin-bottom: 14px;
-    }
-
-    .section-heading p {
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .glass-card {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow);
-    }
-
-    .quote-card {
-      max-width: 850px;
-      margin: auto;
-      padding: clamp(28px, 6vw, 65px);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .quote-card::before {
-      content: "“";
-      position: absolute;
-      top: -45px;
-      left: 28px;
-      font: 180px "Playfair Display";
-      color: rgba(255, 153, 189, .18);
-    }
-
-    blockquote {
-      position: relative;
-      font: 600 clamp(1.6rem, 4vw, 3rem) / 1.35 "Playfair Display";
-      margin-bottom: 30px;
-    }
-
-    .quote-actions {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .small-btn {
-      padding: 10px 15px;
-      border-radius: 12px;
-      color: white;
-      background: rgba(255,255,255,.1);
-      border: 1px solid rgba(255,255,255,.14);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .category-card,
-    .story-card,
-    .social-card {
-      padding: 27px;
-      transition: transform .35s ease, background .35s ease;
-    }
-
-    .category-card:hover,
-    .story-card:hover,
-    .social-card:hover {
-      transform: translateY(-9px) rotateX(2deg);
-      background: rgba(255,255,255,.16);
-    }
-
-    .card-icon {
-      font-size: 2.3rem;
-      margin-bottom: 16px;
-    }
-
-    .category-card h3,
-    .story-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-
-    .category-card p,
-    .story-card p,
-    .social-card p {
-      color: var(--muted);
-      line-height: 1.6;
-    }
-
-    .gallery {
-      columns: 4 230px;
-      column-gap: 18px;
-    }
-
-    .gallery figure {
-      margin-bottom: 18px;
-      break-inside: avoid;
-      overflow: hidden;
-      border-radius: 22px;
-      position: relative;
-      border: 1px solid var(--border);
-    }
-
-    .gallery img {
-      width: 100%;
-      display: block;
-      transition: transform .6s ease, filter .6s ease;
-    }
-
-    .gallery figure:hover img {
-      transform: scale(1.1);
-      filter: saturate(1.3);
-    }
-
-    .generator {
-      max-width: 760px;
-      margin: auto;
-      padding: 30px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      color: var(--pink-light);
-      font-weight: 700;
-    }
-
-    select,
-    input {
-      width: 100%;
-      padding: 14px;
-      color: white;
-      background: rgba(0,0,0,.25);
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      outline: none;
-    }
-
-    option {
-      color: #222;
-    }
-
-    .result {
-      min-height: 120px;
-      margin: 22px 0;
-      padding: 22px;
-      border-radius: 18px;
-      color: var(--white);
-      line-height: 1.8;
-      background: rgba(255,255,255,.08);
-      border: 1px solid var(--border);
-    }
-
-    .social-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .social-card {
-      text-align: center;
-    }
-
-    .social-card strong {
-      display: block;
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-    }
-
-    .social-card a {
-      display: inline-block;
-      margin-top: 17px;
-      color: var(--pink-light);
-      font-weight: 700;
-    }
-
-    .newsletter {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 35px;
-      align-items: center;
-      padding: 38px;
-    }
-
-    .newsletter h2 {
-      font-size: 2.7rem;
-      margin-bottom: 12px;
-    }
-
-    .newsletter p {
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .newsletter form {
-      display: grid;
-      gap: 12px;
-    }
-
-    footer {
-      padding: 55px 0 25px;
-      border-top: 1px solid rgba(255,255,255,.1);
-      background: rgba(0,0,0,.25);
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 35px;
-      margin-bottom: 35px;
-    }
-
-    footer h3 {
-      margin-bottom: 14px;
-    }
-
-    footer p,
-    footer li {
-      color: var(--muted);
-      line-height: 2;
-      list-style: none;
-    }
-
-    .copyright {
-      padding-top: 20px;
-      text-align: center;
-      color: #bcaec5;
-      border-top: 1px solid rgba(255,255,255,.1);
-      font-size: .9rem;
-    }
-
-    .floating-whatsapp {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 30;
-      padding: 14px 18px;
-      border-radius: 999px;
-      background: var(--green);
-      color: #062712;
-      font-weight: 800;
-      box-shadow: 0 10px 30px rgba(37,211,102,.35);
-    }
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 25px;
-      transform: translate(-50%, 100px);
-      padding: 14px 22px;
-      background: white;
-      color: #27152f;
-      border-radius: 999px;
-      z-index: 100;
-      transition: .4s ease;
-      opacity: 0;
-    }
-
-    .toast.show {
-      transform: translate(-50%, 0);
-      opacity: 1;
-    }
-
-    @media (max-width: 950px) {
-      .nav-links,
-      header .whatsapp-btn {
-        display: none;
-      }
-
-      .menu-toggle {
-        display: block;
-      }
-
-      .nav.open .nav-links {
-        display: flex;
-        position: absolute;
-        top: 75px;
-        left: 4%;
-        right: 4%;
-        padding: 22px;
-        border-radius: 20px;
-        flex-direction: column;
-        align-items: flex-start;
-        background: rgba(27,16,43,.95);
-        border: 1px solid var(--border);
-      }
-
-      .grid,
-      .social-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 650px) {
-      section {
-        padding: 75px 0;
-      }
-
-      .hero {
-        padding-top: 125px;
-      }
-
-      .grid,
-      .social-grid,
-      .newsletter,
-      .footer-grid,
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 3.3rem;
-      }
-
-      .newsletter,
-      .generator {
-        padding: 24px;
-      }
-
-      .floating-whatsapp {
-        right: 12px;
-        bottom: 12px;
-        font-size: .9rem;
-      }
+        radial-gradient(circle at 10% 0%,rgba(132,105,232,.12),transparent 24%),
+        radial-gradient(circle at 92% 16%,rgba(236,154,182,.16),transparent 22%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+    body.ai-open{overflow:hidden}
+    a{text-decoration:none;color:inherit}
+    button,input,textarea{font:inherit}
+    button{border:0}
+    img{max-width:100%}
+
+    .container{width:min(var(--max),92%);margin:auto}
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:rgba(244,240,234,.84);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(228,221,213,.72);
+    }
+    .nav{
+      min-height:72px;
+      display:flex;align-items:center;justify-content:space-between;gap:18px;
+    }
+    .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:-.02em}
+    .brand-mark{
+      width:38px;height:38px;border-radius:12px;
+      display:grid;place-items:center;
+      background:#171514;color:#fff;
+      font-size:17px;
+    }
+    .brand small{display:block;color:var(--muted);font-size:10px;font-weight:600;margin-top:2px}
+    .nav-links{display:flex;gap:24px;color:#4f4843;font-size:12px;font-weight:700}
+    .nav-links a:hover{color:var(--accent)}
+    .nav-actions{display:flex;align-items:center;gap:8px}
+    .pill{
+      padding:8px 11px;border:1px solid var(--line);
+      border-radius:999px;background:rgba(255,255,255,.58);
+      font-size:10px;color:#5b554f;
+    }
+    .menu-btn{
+      display:none;width:40px;height:40px;border-radius:12px;
+      background:var(--surface);border:1px solid var(--line);cursor:pointer;
+    }
+
+    .hero{padding:76px 0 48px}
+    .hero-grid{display:grid;grid-template-columns:1.03fr .97fr;gap:52px;align-items:center}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:7px;
+      font-size:10px;text-transform:uppercase;letter-spacing:.16em;font-weight:800;
+      color:#6f5cc4;
+    }
+    h1,h2,h3{font-family:"Playfair Display",serif}
+    h1{
+      font-size:clamp(46px,7vw,86px);line-height:.97;letter-spacing:-.045em;
+      margin:15px 0 22px;max-width:720px;
+    }
+    h1 span{color:var(--accent)}
+    .hero-copy p{
+      color:var(--muted);font-size:15px;line-height:1.85;max-width:620px;
+      margin:0 0 24px;
+    }
+    .hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      border-radius:14px;padding:13px 16px;font-size:11px;font-weight:800;
+      cursor:pointer;transition:.2s ease;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn-dark{background:var(--ink);color:#fff}
+    .btn-soft{background:var(--surface);border:1px solid var(--line)}
+    .btn-ai{background:linear-gradient(135deg,var(--accent),#a98af0);color:#fff}
+    .trust-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+    .trust{
+      padding:9px 11px;border:1px solid var(--line);border-radius:12px;
+      background:rgba(255,255,255,.56);font-size:9px;color:#6b645f;
+    }
+
+    .ai-stage{
+      position:relative;display:flex;justify-content:center;align-items:center;
+      min-height:500px;
+    }
+    .glow{
+      position:absolute;width:390px;height:390px;border-radius:50%;
+      background:radial-gradient(circle,var(--accent-2),transparent 68%);
+      filter:blur(18px);opacity:.35;
+    }
+    .phone{
+      position:relative;width:min(355px,84vw);min-height:585px;
+      border-radius:38px;background:#fbfaf7;border:1px solid #e1dbd2;
+      box-shadow:0 35px 95px rgba(34,32,42,.18);
+      padding:12px;overflow:hidden;
+    }
+    .phone-top{display:flex;align-items:center;justify-content:space-between;padding:9px 9px 14px}
+    .phone-icon{width:32px;height:32px;border-radius:10px;background:#f2eee7;border:1px solid var(--line);display:grid;place-items:center;color:#29262a}
+    .plan{font-size:9px;color:#615a55}
+    .plan b{color:var(--accent)}
+    .welcome{padding:54px 24px 26px;text-align:center}
+    .ai-logo{
+      width:54px;height:54px;margin:0 auto 18px;border-radius:18px;
+      display:grid;place-items:center;background:#19171b;color:#fff;font-size:21px;
+    }
+    .welcome h3{margin:0;font-size:25px}
+    .welcome p{margin:7px auto 0;color:var(--muted);font-size:10px;line-height:1.65;max-width:220px}
+    .chat-list{padding:5px 10px 86px}
+    .bubble{max-width:86%;padding:12px 13px;border-radius:16px;font-size:10px;line-height:1.65;margin:10px 0}
+    .bubble.ai{background:#f0ede8;color:#4f4945}
+    .bubble.user{margin-left:auto;background:#2a2830;color:#fff}
+    .composer{
+      position:absolute;left:12px;right:12px;bottom:12px;
+      border:1px solid var(--line);background:#fff;border-radius:18px;padding:9px;
+      display:flex;align-items:center;gap:8px;
+    }
+    .composer input{
+      flex:1;border:0;outline:0;background:transparent;font-size:10px;min-width:0;
+    }
+    .composer button{width:34px;height:34px;border-radius:12px;background:#242129;color:#fff;cursor:pointer}
+
+    section{padding:92px 0}
+    .section-head{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:28px}
+    .section-head h2{font-size:clamp(34px,4.8vw,54px);margin:8px 0 0;letter-spacing:-.035em}
+    .section-head p{max-width:480px;color:var(--muted);font-size:11px;line-height:1.8;margin:0}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .card{
+      background:rgba(255,253,249,.78);border:1px solid var(--line);border-radius:22px;
+      box-shadow:0 14px 36px rgba(34,32,42,.05);
+    }
+    .feature-card{padding:24px;min-height:220px}
+    .feature-icon{font-size:24px;margin-bottom:26px}
+    .feature-card h3{font-size:23px;margin:0 0 8px}
+    .feature-card p{font-size:10px;line-height:1.75;color:var(--muted);margin:0}
+    .feature-card a{display:inline-flex;margin-top:14px;font-size:10px;font-weight:800;color:var(--accent)}
+
+    .stories{display:grid;grid-template-columns:1.15fr .85fr;gap:16px}
+    .story-main,.story-side{position:relative;overflow:hidden;border-radius:26px;min-height:470px;border:1px solid var(--line);box-shadow:var(--shadow)}
+    .story-main img,.story-side img{width:100%;height:100%;object-fit:cover;display:block}
+    .story-main:after,.story-side:after{
+      content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(17,15,16,.78));
+    }
+    .story-content{position:absolute;z-index:1;left:24px;right:24px;bottom:22px;color:#fff}
+    .tag{display:inline-flex;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);font-size:8px;font-weight:800}
+    .story-content h3{font-size:30px;margin:9px 0 5px}
+    .story-content p{font-size:10px;line-height:1.6;color:#ece7e2;max-width:560px;margin:0}
+    .story-side{min-height:227px}
+    .story-stack{display:grid;gap:16px}
+
+    .quote{
+      border-radius:28px;background:#201f26;color:#fff;padding:38px;
+      position:relative;overflow:hidden;
+    }
+    .quote:before{
+      content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+      background:radial-gradient(circle,var(--accent-2),transparent 68%);right:-85px;top:-115px;opacity:.45;
+    }
+    .quote h3{position:relative;margin:0;max-width:850px;font-size:clamp(30px,4.4vw,52px);line-height:1.08}
+    .quote p{position:relative;color:#d8d1cc;font-size:10px;line-height:1.7;max-width:620px;margin:14px 0 20px}
+
+    .community{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .social{
+      display:flex;align-items:center;gap:12px;padding:17px;border-radius:18px;
+      background:rgba(255,253,249,.84);border:1px solid var(--line);
+    }
+    .social-icon{width:40px;height:40px;border-radius:12px;background:#ebe6df;display:grid;place-items:center;font-size:17px}
+    .social strong{font-size:11px}
+    .social span{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+
+    .cta{
+      display:grid;grid-template-columns:1fr .9fr;gap:26px;align-items:center;
+      background:#f0ebe5;border:1px solid var(--line);border-radius:30px;padding:34px;
+    }
+    .cta h2{font-size:46px;margin:0 0 9px}
+    .cta p{font-size:11px;color:var(--muted);line-height:1.8;max-width:520px}
+    .mini-list{display:grid;gap:8px}
+    .mini{padding:12px 13px;border-radius:14px;background:#fffaf4;border:1px solid var(--line);font-size:10px}
+
+    footer{padding:34px 0 28px;border-top:1px solid var(--line);color:var(--muted);font-size:9px}
+
+    .ai-fab{
+      position:fixed;right:18px;bottom:18px;z-index:55;
+      width:58px;height:58px;border-radius:18px;background:#201f26;color:#fff;
+      box-shadow:0 18px 45px rgba(34,32,42,.22);cursor:pointer;font-size:20px;
+    }
+    .ai-overlay{
+      position:fixed;inset:0;background:rgba(20,17,21,.36);backdrop-filter:blur(8px);
+      z-index:80;display:none;
+    }
+    .ai-overlay.open{display:block}
+    .ai-panel{
+      position:absolute;right:16px;top:16px;bottom:16px;width:min(430px,calc(100% - 32px));
+      background:#f9f7f3;border:1px solid #dfd7ce;border-radius:26px;
+      box-shadow:0 35px 100px rgba(0,0,0,.22);display:flex;flex-direction:column;overflow:hidden;
+    }
+    .ai-panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);background:#fffdfa}
+    .ai-title{display:flex;align-items:center;gap:10px}
+    .ai-avatar{width:38px;height:38px;border-radius:12px;background:#211f27;color:#fff;display:grid;place-items:center}
+    .ai-title strong{display:block;font-size:12px}
+    .ai-title span{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+    .close-ai{width:34px;height:34px;border-radius:10px;background:#f0ebe5;cursor:pointer}
+    .ai-messages{flex:1;overflow:auto;padding:18px}
+    .msg{max-width:84%;padding:11px 12px;border-radius:15px;font-size:10px;line-height:1.65;margin-bottom:10px;white-space:pre-wrap}
+    .msg.ai{background:#ece8e2;color:#4d4844}
+    .msg.user{margin-left:auto;background:#26242c;color:#fff}
+    .ai-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fffdfa}
+    .ai-form textarea{flex:1;border:1px solid var(--line);background:#f6f2ec;border-radius:14px;resize:none;min-height:43px;max-height:120px;padding:11px;outline:none;font-size:10px}
+    .ai-send{width:45px;border-radius:14px;background:#26242c;color:#fff;cursor:pointer}
+    .hint{font-size:8px;color:#98908a;padding:0 14px 10px;text-align:center}
+
+    @media (max-width:900px){
+      .nav-links{display:none}
+      .menu-btn{display:block}
+      .hero-grid,.stories,.cta{grid-template-columns:1fr}
+      .ai-stage{min-height:620px}
+      .grid-3,.community{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:640px){
+      .hero{padding-top:54px}
+      section{padding:70px 0}
+      .grid-3,.community{grid-template-columns:1fr}
+      .phone{min-height:560px}
+      .section-head{display:block}
+      .section-head p{margin-top:12px}
+      .cta{padding:24px}
+      .cta h2{font-size:36px}
+      .story-main{min-height:420px}
+      .story-side{min-height:190px}
+      .ai-panel{right:8px;top:8px;bottom:8px;width:calc(100% - 16px)}
     }
   </style>
 </head>
-
 <body>
-  <canvas id="liquidCanvas"></canvas>
-  <div class="overlay"></div>
-  <div class="floating-hearts" id="hearts"></div>
 
-  <header>
-    <div class="container nav" id="nav">
-      <a href="#accueil" class="logo">❤️ L’UNIVERS <span>D’AMOUR</span></a>
+<header class="topbar">
+  <div class="container nav">
+    <a class="brand" href="#accueil">
+      <div class="brand-mark">♥</div>
+      <div>
+        L’univers d’amour
+        <small>Relations · émotions · inspirations</small>
+      </div>
+    </a>
 
-      <button class="menu-toggle" id="menuToggle" aria-label="Ouvrir le menu">☰</button>
+    <nav class="nav-links">
+      <a href="#accueil">Accueil</a>
+      <a href="#experiences">Expériences</a>
+      <a href="#histoires">Histoires</a>
+      <a href="#communaute">Communauté</a>
+    </nav>
 
-      <nav class="nav-links">
-        <a href="#accueil">Accueil</a>
-        <a href="#citations">Citations</a>
-        <a href="#messages">Messages</a>
-        <a href="#histoires">Histoires</a>
-        <a href="#couple">Couple</a>
-        <a href="#galerie">Galerie</a>
-        <a href="#generateur">Générateur</a>
-        <a href="#communaute">Communauté</a>
-        <a href="#apropos">À propos</a>
-        <a href="#contact">Contact</a>
-      </nav>
-
-      <a class="whatsapp-btn" target="_blank"
-         href="https://wa.me/22788376133">
-        ❤️ WhatsApp
-      </a>
+    <div class="nav-actions">
+      <span class="pill">Plan gratuit</span>
+      <button class="menu-btn" id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+      <button class="btn btn-ai" id="openAiTop">Parler à Amour AI</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <section class="hero" id="accueil">
-      <div class="container">
-        <div class="hero-content">
-          <span class="eyebrow">✨ Bienvenue dans votre univers romantique</span>
-          <h1>Là où les émotions deviennent des <span>histoires.</span></h1>
-          <p>
-            Découvrez un univers rempli d’émotions, de citations, d’histoires,
-            de messages romantiques et de conseils pour mieux aimer,
-            comprendre et partager.
-          </p>
-          <div class="hero-actions">
-            <a href="#citations" class="primary-btn">✨ Explorer l’univers</a>
-            <a href="https://wa.me/22788376133" target="_blank" class="secondary-btn">💚 Rejoindre WhatsApp</a>
+<main id="accueil">
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow">✦ Nouvelle expérience</div>
+        <h1>L’amour devient plus <span>simple, humain et intelligent.</span></h1>
+        <p>
+          Un espace moderne pour trouver les mots justes, comprendre ses émotions,
+          découvrir des histoires et échanger avec Amour AI — le compagnon digital
+          pensé pour les relations et le quotidien.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-dark" id="openAiHero">✦ Commencer une conversation</button>
+          <a class="btn btn-soft" href="#histoires">Découvrir les histoires</a>
+        </div>
+        <div class="trust-row">
+          <span class="trust">Réponses en français</span>
+          <span class="trust">Interface mobile-first</span>
+          <span class="trust">Conseils & créativité</span>
+        </div>
+      </div>
+
+      <div class="ai-stage">
+        <div class="glow"></div>
+        <div class="phone" aria-label="Aperçu de Amour AI">
+          <div class="phone-top">
+            <div class="phone-icon">☰</div>
+            <div class="plan">Plan gratuit · <b>Amour AI</b></div>
+            <div class="phone-icon">✦</div>
+          </div>
+          <div class="welcome">
+            <div class="ai-logo">♥</div>
+            <h3>Bonjour 👋</h3>
+            <p>Je suis Amour AI. Je peux t’aider à trouver les bons mots, comprendre une situation ou créer un message.</p>
+          </div>
+          <div class="chat-list">
+            <div class="bubble user">Je veux écrire un message pour montrer à quelqu’un qu’il me manque.</div>
+            <div class="bubble ai">Bien sûr. Dis-moi le ton souhaité : doux, romantique, profond ou simple.</div>
+            <div class="bubble user">Doux et sincère ❤️</div>
+            <div class="bubble ai">« Tu me manques dans les petits moments, dans les silences et même au milieu d’une journée chargée. J’aimerais simplement te retrouver un peu plus près de moi. »</div>
+          </div>
+          <div class="composer">
+            <input aria-label="Message d'aperçu" placeholder="Comment puis-je t’aider ?" id="previewInput">
+            <button id="previewSend">↑</button>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section id="citations">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">❤️ Inspiration quotidienne</span>
-          <h2>La citation du <span>jour</span></h2>
-          <p>Une pensée douce pour illuminer votre journée.</p>
+  <section id="experiences">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">✦ Tout ce qui compte</div>
+          <h2>Une plateforme pensée autour de tes émotions.</h2>
         </div>
+        <p>Une identité plus sobre, plus premium et une expérience inspirée des interfaces conversationnelles modernes.</p>
+      </div>
 
-        <div class="quote-card glass-card">
-          <blockquote id="quoteText">
-            L’amour véritable ne se mesure pas aux mots prononcés, mais aux actes accomplis.
-          </blockquote>
+      <div class="grid-3">
+        <article class="card feature-card">
+          <div class="feature-icon">✦</div>
+          <h3>Amour AI</h3>
+          <p>Échange avec une IA qui peut t’aider à écrire, réfléchir, reformuler, analyser une situation ou trouver une réponse plus délicate.</p>
+          <a href="#" class="open-ai-link">Ouvrir l’assistant →</a>
+        </article>
+        <article class="card feature-card">
+          <div class="feature-icon">♡</div>
+          <h3>Inspirations</h3>
+          <p>Citations, petits mots, idées de messages et contenus courts pour nourrir les conversations qui comptent vraiment.</p>
+          <a href="#histoires">Voir les inspirations →</a>
+        </article>
+        <article class="card feature-card">
+          <div class="feature-icon">◌</div>
+          <h3>Relations</h3>
+          <p>Des contenus accessibles pour parler de communication, de confiance, de limites, de distance et de réconciliation.</p>
+          <a href="#conseils">Découvrir →</a>
+        </article>
+      </div>
+    </div>
+  </section>
 
-          <div class="quote-actions">
-            <button class="small-btn" onclick="likeQuote()">❤️ J’aime</button>
-            <button class="small-btn" onclick="copyText(document.getElementById('quoteText').innerText)">📋 Copier</button>
-            <button class="small-btn" onclick="shareQuote()">📲 Partager</button>
-            <a class="small-btn" target="_blank" href="https://wa.me/22788376133">💬 WhatsApp</a>
+  <section id="histoires">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">✦ Visuels renouvelés</div>
+          <h2>Histoires à regarder, ressentir et partager.</h2>
+        </div>
+        <p>De nouvelles photographies remplacent l’ancienne galerie tout en conservant l’identité de L’univers d’amour.</p>
+      </div>
+
+      <div class="stories">
+        <article class="story-main">
+          <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1400&q=88" alt="Couple partageant un moment tendre" loading="lazy">
+          <div class="story-content">
+            <span class="tag">Histoire du moment</span>
+            <h3>Parfois, les plus beaux mots sont ceux que l’on ose enfin dire.</h3>
+            <p>Un espace pour raconter les rencontres, les silences, les retrouvailles et les petits gestes qui changent une relation.</p>
           </div>
-        </div>
-      </div>
-    </section>
+        </article>
 
-    <section id="messages">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">💞 Explorez nos contenus</span>
-          <h2>Un univers pensé pour <span>aimer</span></h2>
-        </div>
-
-        <div class="grid">
-          <article class="category-card glass-card">
-            <div class="card-icon">❤️</div>
-            <h3>Citations d’amour</h3>
-            <p>Les plus belles pensées sur l’amour et les relations humaines.</p>
-          </article>
-
-          <article class="category-card glass-card">
-            <div class="card-icon">💌</div>
-            <h3>Messages romantiques</h3>
-            <p>Des messages à envoyer à une personne spéciale.</p>
-          </article>
-
-          <article class="category-card glass-card" id="histoires">
-            <div class="card-icon">🌹</div>
-            <h3>Histoires d’amour</h3>
-            <p>Histoires courtes, témoignages et récits émouvants.</p>
-          </article>
-
-          <article class="category-card glass-card" id="couple">
-            <div class="card-icon">💑</div>
-            <h3>Couple</h3>
-            <p>Conseils et réflexions pour construire une relation solide.</p>
-          </article>
-
-          <article class="category-card glass-card">
-            <div class="card-icon">💔</div>
-            <h3>Rupture</h3>
-            <p>Des textes pour traverser les moments difficiles.</p>
-          </article>
-
-          <article class="category-card glass-card">
-            <div class="card-icon">✨</div>
-            <h3>Motivation</h3>
-            <p>Amour, confiance en soi et développement personnel.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section id="galerie">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">📸 Instants précieux</span>
-          <h2>Galerie <span>romantique</span></h2>
-          <p>Des visuels libres d’utilisation provenant d’Unsplash.</p>
-        </div>
-
-        <div class="gallery">
-          <figure><img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=900&q=85" alt="Couple romantique"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=85" alt="Mariage"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85" alt="Roses"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=900&q=85" alt="Coucher de soleil"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=900&q=85" alt="Moment romantique"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?auto=format&fit=crop&w=900&q=85" alt="Amour et nature"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85" alt="Portrait"></figure>
-          <figure><img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?auto=format&fit=crop&w=900&q=85" alt="Nature romantique"></figure>
-        </div>
-      </div>
-    </section>
-
-    <section id="generateur">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">✨ Une émotion, quelques mots</span>
-          <h2>Générateur de <span>messages</span></h2>
-        </div>
-
-        <div class="generator glass-card">
-          <div class="form-grid">
-            <div>
-              <label for="situation">Situation</label>
-              <select id="situation">
-                <option>Déclaration</option>
-                <option>Anniversaire</option>
-                <option>Bonne nuit</option>
-                <option>Bonne journée</option>
-                <option>Excuses</option>
-                <option>Manque</option>
-                <option>Saint-Valentin</option>
-                <option>Mariage</option>
-                <option>Réconciliation</option>
-              </select>
+        <div class="story-stack">
+          <article class="story-side">
+            <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=1200&q=88" alt="Moment romantique au coucher du soleil" loading="lazy">
+            <div class="story-content">
+              <span class="tag">Inspiration</span>
+              <h3>Les petits gestes comptent.</h3>
             </div>
-
-            <div>
-              <label for="style">Style</label>
-              <select id="style">
-                <option>Romantique</option>
-                <option>Poétique</option>
-                <option>Profond</option>
-                <option>Passionné</option>
-                <option>Simple</option>
-                <option>Élégant</option>
-              </select>
+          </article>
+          <article class="story-side">
+            <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&w=1200&q=88" alt="Portrait élégant" loading="lazy">
+            <div class="story-content">
+              <span class="tag">Confiance</span>
+              <h3>Être soi, même quand on aime.</h3>
             </div>
-          </div>
-
-          <button class="primary-btn" onclick="generateMessage()">✨ Générer mon message</button>
-
-          <div class="result" id="messageResult">
-            Votre message apparaît ici...
-          </div>
-
-          <div class="quote-actions">
-            <button class="small-btn" onclick="copyText(document.getElementById('messageResult').innerText)">📋 Copier</button>
-            <button class="small-btn" onclick="sendMessageWhatsApp()">📲 Envoyer sur WhatsApp</button>
-            <button class="small-btn" onclick="favoriteMessage()">❤️ Ajouter aux favoris</button>
-          </div>
+          </article>
         </div>
-      </div>
-    </section>
-
-    <section id="communaute">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">🌐 Retrouvez-nous partout</span>
-          <h2>Rejoins notre <span>communauté</span></h2>
-          <p>Une seule communauté, plusieurs plateformes, un même univers : l’amour.</p>
-        </div>
-
-        <div class="social-grid">
-          <div class="social-card glass-card"><strong>💚 WhatsApp</strong><p>L’univers d’amour ❤️</p><a target="_blank" href="https://whatsapp.com/channel/0029Vb6c3GNFsn0huWZ7nx1k">Rejoindre le canal →</a></div>
-          <div class="social-card glass-card"><strong>▶️ YouTube</strong><p>L’univers d’amour</p><a target="_blank" href="https://youtube.com/@luniversdamour-f1x?si=PryZZQbt2XHFglyB">Voir notre chaîne →</a></div>
-          <div class="social-card glass-card"><strong>🔵 Facebook</strong><p>L’univers d’amour</p><a target="_blank" href="https://www.facebook.com/share/14VVXy5eto2/">Suivre sur Facebook →</a></div>
-          <div class="social-card glass-card"><strong>👻 Snapchat</strong><p>@lunivers.damour</p><a target="_blank" href="https://www.snapchat.com/add/lunivers.damour?share_id=EIYfm-Qh20I&locale=fr-FR">Nous suivre →</a></div>
-          <div class="social-card glass-card"><strong>🎵 TikTok</strong><p>@luniversdamour85</p><a target="_blank" href="https://tiktok.com/@luniversdamour85">Suivre sur TikTok →</a></div>
-          <div class="social-card glass-card"><strong>📸 Instagram</strong><p>@lunivers.damour</p><a target="_blank" href="https://www.instagram.com/lunivers.damour?igsh=MXIxZTYwaGFucGszdQ==">Suivre sur Instagram →</a></div>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact">
-      <div class="container">
-        <div class="newsletter glass-card">
-          <div>
-            <h2>💌 Recevez nos nouveautés</h2>
-            <p>Inscrivez-vous pour recevoir des citations, histoires et messages romantiques.</p>
-            <br>
-            <p>📍 Niamey, Niger<br>📞 +227 88 37 61 33</p>
-          </div>
-
-          <form onsubmit="subscribe(event)">
-            <input type="text" id="name" placeholder="Votre prénom" required>
-            <input type="email" id="email" placeholder="Votre adresse e-mail" required>
-            <button class="primary-btn" type="submit">S’inscrire</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <section id="apropos">
-      <div class="container">
-        <div class="section-heading">
-          <span class="eyebrow">❤️ À propos</span>
-          <h2>L’univers d’<span>amour</span></h2>
-          <p>
-            L’univers d’amour est une plateforme digitale destinée à partager
-            des émotions, des histoires, des citations, des messages et des
-            contenus inspirants autour de l’amour et des relations humaines.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <a class="floating-whatsapp" target="_blank" href="https://wa.me/22788376133">
-    ❤️ WhatsApp
-  </a>
-
-  <div class="toast" id="toast">Copié avec succès ❤️</div>
-
-  <footer>
-    <div class="container footer-grid">
-      <div>
-        <h3>❤️ L’UNIVERS D’AMOUR</h3>
-        <p>Là où les émotions deviennent des histoires.</p>
-        <p>📍 Niamey, Niger</p>
-        <p>📞 +227 88 37 61 33</p>
-      </div>
-
-      <div>
-        <h3>Navigation</h3>
-        <ul>
-          <li><a href="#accueil">Accueil</a></li>
-          <li><a href="#citations">Citations</a></li>
-          <li><a href="#galerie">Galerie</a></li>
-          <li><a href="#generateur">Générateur</a></li>
-          <li><a href="#apropos">À propos</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <h3>Contact</h3>
-        <p>📧 luniversdamour833@gmail.com</p>
-        <a class="secondary-btn" href="mailto:luniversdamour833@gmail.com">Nous écrire</a>
       </div>
     </div>
+  </section>
 
-    <div class="container copyright">
-      © 2026 L’univers d’amour — Tous droits réservés.
+  <section id="conseils">
+    <div class="container">
+      <div class="quote">
+        <div class="eyebrow" style="color:#e8c7d3">✦ Une nouvelle façon de parler d’amour</div>
+        <h3>Plus qu’un site de citations : un endroit pour trouver les bons mots.</h3>
+        <p>Amour AI transforme une idée, une émotion ou une situation en conversation utile et en texte prêt à partager.</p>
+        <button class="btn btn-ai" id="openAiQuote">Parler avec Amour AI</button>
+      </div>
     </div>
-  </footer>
+  </section>
 
-  <script>
-    // Menu mobile
-    const nav = document.getElementById("nav");
-    document.getElementById("menuToggle").addEventListener("click", () => {
-      nav.classList.toggle("open");
-    });
+  <section id="communaute">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">✦ Même communauté</div>
+          <h2>Tous tes réseaux restent ici.</h2>
+        </div>
+        <p>Les liens sociaux existants sont conservés. Le design change, pas ta communauté.</p>
+      </div>
 
-    // Notifications
-    function showToast(message) {
-      const toast = document.getElementById("toast");
-      toast.textContent = message;
-      toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 2500);
-    }
+      <div class="community">
+        <a class="social" target="_blank" rel="noopener" href="https://whatsapp.com/channel/0029Vb6c3GNFsn0huWZ7nx1k">
+          <div class="social-icon">WA</div><div><strong>WhatsApp</strong><span>Rejoindre le canal</span></div>
+        </a>
+        <a class="social" target="_blank" rel="noopener" href="https://youtube.com/@luniversdamour-f1x?si=PryZZQbt2XHFglyB">
+          <div class="social-icon">▶</div><div><strong>YouTube</strong><span>Voir la chaîne</span></div>
+        </a>
+        <a class="social" target="_blank" rel="noopener" href="https://www.facebook.com/share/14VVXy5eto2/">
+          <div class="social-icon">f</div><div><strong>Facebook</strong><span>Suivre la page</span></div>
+        </a>
+        <a class="social" target="_blank" rel="noopener" href="https://www.snapchat.com/add/lunivers.damour?share_id=EIYfm-Qh20I&locale=fr-FR">
+          <div class="social-icon">SC</div><div><strong>Snapchat</strong><span>@lunivers.damour</span></div>
+        </a>
+        <a class="social" target="_blank" rel="noopener" href="https://tiktok.com/@luniversdamour85">
+          <div class="social-icon">♪</div><div><strong>TikTok</strong><span>@luniversdamour85</span></div>
+        </a>
+        <a class="social" target="_blank" rel="noopener" href="https://www.instagram.com/lunivers.damour?igsh=MXIxZTYwaGFucGszdQ==">
+          <div class="social-icon">◎</div><div><strong>Instagram</strong><span>@lunivers.damour</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
 
-    // Copier du texte
-    async function copyText(text) {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast("Copié avec succès ❤️");
-      } catch {
-        showToast("Impossible de copier automatiquement");
-      }
-    }
+  <section>
+    <div class="container">
+      <div class="cta">
+        <div>
+          <div class="eyebrow">✦ L’expérience commence ici</div>
+          <h2>Une interface plus claire. Une IA plus proche.</h2>
+          <p>Le nouveau L’univers d’amour est pensé pour mobile, rapide à parcourir et centré sur la conversation.</p>
+          <button class="btn btn-dark" id="openAiCta">Lancer Amour AI</button>
+        </div>
+        <div class="mini-list">
+          <div class="mini">✓ Conseils relationnels et rédaction</div>
+          <div class="mini">✓ Réponses en français</div>
+          <div class="mini">✓ Historique local de la conversation</div>
+          <div class="mini">✓ Aucun changement de tes réseaux sociaux</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-    // Citations quotidiennes
-    const quotes = [
-      "L’amour véritable ne se mesure pas aux mots prononcés, mais aux actes accomplis.",
-      "Aimer, c’est choisir chaque jour de construire une histoire à deux.",
-      "Les plus belles histoires commencent souvent par un simple sourire.",
-      "L’amour ne rend pas parfait, il rend les imperfections magnifiques.",
-      "Quand deux cœurs se comprennent, même le silence devient une conversation."
-    ];
+<footer>
+  <div class="container">
+    © 2026 L’univers d’amour — Nouvelle expérience digitale.
+  </div>
+</footer>
 
-    const day = new Date().getDate();
-    document.getElementById("quoteText").textContent = quotes[day % quotes.length];
+<button class="ai-fab" id="aiFab" aria-label="Ouvrir Amour AI">♥</button>
 
-    function likeQuote() {
-      showToast("Merci pour votre amour ❤️");
-    }
+<div class="ai-overlay" id="aiOverlay">
+  <div class="ai-panel" role="dialog" aria-modal="true" aria-label="Amour AI">
+    <div class="ai-panel-head">
+      <div class="ai-title">
+        <div class="ai-avatar">♥</div>
+        <div><strong>Amour AI</strong><span>Assistant relationnel · actif</span></div>
+      </div>
+      <button class="close-ai" id="closeAi" aria-label="Fermer">×</button>
+    </div>
+    <div class="ai-messages" id="aiMessages">
+      <div class="msg ai">Bonjour ❤️ Je suis Amour AI. Parle-moi d’une situation, d’un message à écrire ou d’une émotion que tu veux comprendre.</div>
+    </div>
+    <div class="hint">Évite de partager des informations sensibles ou des mots de passe.</div>
+    <form class="ai-form" id="aiForm">
+      <textarea id="aiInput" rows="1" placeholder="Écris ton message…"></textarea>
+      <button class="ai-send" type="submit" aria-label="Envoyer">↑</button>
+    </form>
+  </div>
+</div>
 
-    function shareQuote() {
-      const text = document.getElementById("quoteText").innerText;
-      if (navigator.share) {
-        navigator.share({
-          title: "L’univers d’amour ❤️",
-          text,
-          url: location.href
-        });
-      } else {
-        copyText(text);
-      }
-    }
+<script>
+  const overlay = document.getElementById("aiOverlay");
+  const messages = document.getElementById("aiMessages");
+  const input = document.getElementById("aiInput");
+  const history = [];
 
-    // Générateur de messages
-    const messages = {
-      "Déclaration": "Je voulais simplement te dire que tu occupes une place unique dans mon cœur. Avec toi, chaque instant devient précieux.",
-      "Anniversaire": "Joyeux anniversaire à la personne qui rend ma vie plus belle. Que cette nouvelle année t’apporte autant de bonheur que tu m’en donnes.",
-      "Bonne nuit": "Que ta nuit soit douce et remplie de beaux rêves. Sache que tu es la dernière pensée qui traverse mon cœur ce soir.",
-      "Bonne journée": "Je te souhaite une merveilleuse journée. N’oublie jamais que quelqu’un pense très fort à toi.",
-      "Excuses": "Je suis désolé(e) si mes paroles ou mes actes t’ont blessé(e). Tu comptes énormément pour moi et je veux réparer les choses.",
-      "Manque": "Tu me manques plus que les mots ne peuvent le dire. Même loin de toi, mon cœur reste toujours près du tien.",
-      "Saint-Valentin": "Tu es mon plus beau cadeau, ma plus belle histoire et la personne avec qui je veux continuer à écrire notre avenir.",
-      "Mariage": "Aujourd’hui, je te choisis encore et pour toujours. Je promets de prendre soin de notre amour avec tendresse et fidélité.",
-      "Réconciliation": "Je ne veux pas laisser la distance ou les malentendus nous séparer. Notre amour mérite une nouvelle chance."
+  function openAI(seed="") {
+    overlay.classList.add("open");
+    document.body.classList.add("ai-open");
+    setTimeout(() => {
+      input.focus();
+      if (seed) input.value = seed;
+    }, 30);
+  }
+
+  function closeAI() {
+    overlay.classList.remove("open");
+    document.body.classList.remove("ai-open");
+  }
+
+  document.getElementById("aiFab").addEventListener("click", () => openAI());
+  document.getElementById("openAiTop").addEventListener("click", () => openAI());
+  document.getElementById("openAiHero").addEventListener("click", () => openAI());
+  document.getElementById("openAiQuote").addEventListener("click", () => openAI());
+  document.getElementById("openAiCta").addEventListener("click", () => openAI());
+  document.querySelectorAll(".open-ai-link").forEach((el) => {
+    el.addEventListener("click", (event) => { event.preventDefault(); openAI(); });
+  });
+  document.getElementById("closeAi").addEventListener("click", closeAI);
+  overlay.addEventListener("click", (event) => { if (event.target === overlay) closeAI(); });
+
+  function addMessage(text, role) {
+    const el = document.createElement("div");
+    el.className = "msg " + role;
+    el.textContent = text;
+    messages.appendChild(el);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  async function askAI(text) {
+    const payload = {
+      messages: [...history, { role: "user", content: text }].slice(-8)
     };
 
-    function generateMessage() {
-      const situation = document.getElementById("situation").value;
-      const style = document.getElementById("style").value;
-      const message = messages[situation];
+    history.push({ role: "user", content: text });
+    addMessage(text, "user");
+    input.value = "";
 
-      document.getElementById("messageResult").textContent =
-        `${message} Ce message est écrit dans un style ${style.toLowerCase()}, avec toute la sincérité de mon cœur. ❤️`;
+    const loading = document.createElement("div");
+    loading.className = "msg ai";
+    loading.textContent = "Je réfléchis…";
+    messages.appendChild(loading);
+    messages.scrollTop = messages.scrollHeight;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.error || "AI indisponible");
+
+      const reply = data?.reply || data?.response || data?.result?.response || "Je n’ai pas pu répondre cette fois.";
+      loading.remove();
+      addMessage(reply, "ai");
+      history.push({ role: "assistant", content: reply });
+    } catch (error) {
+      loading.textContent = "Je rencontre un problème de connexion avec mon moteur IA. Réessaie dans un instant.";
+      console.error(error);
     }
+  }
 
-    function sendMessageWhatsApp() {
-      const message = document.getElementById("messageResult").innerText;
-      window.open("https://wa.me/?text=" + encodeURIComponent(message), "_blank");
-    }
+  document.getElementById("aiForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = input.value.trim();
+    if (value) askAI(value);
+  });
 
-    function favoriteMessage() {
-      const message = document.getElementById("messageResult").innerText;
-      localStorage.setItem("messageFavori", message);
-      showToast("Message ajouté aux favoris ❤️");
-    }
-
-    function subscribe(event) {
+  document.getElementById("previewSend").addEventListener("click", () => {
+    const value = document.getElementById("previewInput").value.trim();
+    openAI(value);
+  });
+  document.getElementById("previewInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
       event.preventDefault();
-      const email = document.getElementById("email").value;
-
-      if (!email.includes("@")) {
-        showToast("Veuillez saisir une adresse valide");
-        return;
-      }
-
-      showToast("Inscription réussie 💌");
-      event.target.reset();
+      const value = event.currentTarget.value.trim();
+      openAI(value);
     }
+  });
 
-    // Cœurs flottants
-    const heartsContainer = document.getElementById("hearts");
+  document.getElementById("menuBtn").addEventListener("click", () => {
+    const nav = document.querySelector(".nav-links");
+    nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+    nav.style.position = "absolute";
+    nav.style.top = "70px";
+    nav.style.left = "4%";
+    nav.style.right = "4%";
+    nav.style.padding = "18px";
+    nav.style.flexDirection = "column";
+    nav.style.background = "rgba(255,253,249,.98)";
+    nav.style.border = "1px solid var(--line)";
+    nav.style.borderRadius = "18px";
+  });
 
-    for (let i = 0; i < 25; i++) {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.textContent = Math.random() > .5 ? "♥" : "♡";
-      heart.style.left = Math.random() * 100 + "%";
-      heart.style.fontSize = 10 + Math.random() * 25 + "px";
-      heart.style.animationDuration = 8 + Math.random() * 12 + "s";
-      heart.style.animationDelay = Math.random() * 10 + "s";
-      heartsContainer.appendChild(heart);
-    }
-
-    // Fond liquide 3D Three.js
-    const canvas = document.getElementById("liquidCanvas");
-    const scene = new THREE.Scene();
-
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      .1,
-      1000
-    );
-    camera.position.z = 3;
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas,
-      alpha: true,
-      antialias: true
-    });
-
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    const geometry = new THREE.SphereGeometry(1.5, 128, 128);
-
-    const material = new THREE.ShaderMaterial({
-      transparent: true,
-      uniforms: {
-        uTime: { value: 0 },
-        uMouse: { value: new THREE.Vector2(0, 0) }
-      },
-      vertexShader: `
-        uniform float uTime;
-        uniform vec2 uMouse;
-        varying vec2 vUv;
-
-        void main() {
-          vUv = uv;
-          vec3 pos = position;
-
-          float wave1 = sin(pos.x * 3.0 + uTime) * 0.12;
-          float wave2 = sin(pos.y * 4.0 - uTime * 1.2) * 0.10;
-          float wave3 = sin(pos.z * 5.0 + uTime * .8) * 0.08;
-
-          pos += normal * (wave1 + wave2 + wave3);
-          pos.x += uMouse.x * .18;
-          pos.y += uMouse.y * .18;
-
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-        }
-      `,
-      fragmentShader: `
-        uniform float uTime;
-        varying vec2 vUv;
-
-        void main() {
-          vec3 pink = vec3(1.0, 0.12, 0.42);
-          vec3 violet = vec3(0.42, 0.18, 1.0);
-          vec3 red = vec3(1.0, 0.03, 0.20);
-
-          float mixOne = sin(vUv.y * 8.0 + uTime) * .5 + .5;
-          float mixTwo = sin(vUv.x * 10.0 - uTime * 1.4) * .5 + .5;
-
-          vec3 color = mix(pink, violet, mixOne);
-          color = mix(color, red, mixTwo * .35);
-
-          float glow = smoothstep(0.9, 0.1, distance(vUv, vec2(.5)));
-          gl_FragColor = vec4(color, glow * .34);
-        }
-      `
-    });
-
-    const liquid = new THREE.Mesh(geometry, material);
-    liquid.position.set(1.1, .3, -1);
-    liquid.scale.set(1.35, 1.35, 1.35);
-    scene.add(liquid);
-
-    const light = new THREE.PointLight(0xff5a9d, 3, 10);
-    light.position.set(2, 2, 3);
-    scene.add(light);
-
-    window.addEventListener("mousemove", event => {
-      const x = (event.clientX / window.innerWidth) * 2 - 1;
-      const y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      material.uniforms.uMouse.value.x += (x - material.uniforms.uMouse.value.x) * .04;
-      material.uniforms.uMouse.value.y += (y - material.uniforms.uMouse.value.y) * .04;
-    });
-
-    function animate(time) {
-      requestAnimationFrame(animate);
-      material.uniforms.uTime.value = time * .0005;
-      liquid.rotation.y = time * .00008;
-      liquid.rotation.x = Math.sin(time * .0002) * .15;
-      renderer.render(scene, camera);
-    }
-
-    animate(0);
-
-    window.addEventListener("resize", () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-  </script>
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && overlay.classList.contains("open")) closeAI();
+  });
+</script>
 </body>
 </html>
