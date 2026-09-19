@@ -1,0 +1,6 @@
+# Cloudflare Workers local development secrets.
+# NEVER put real credentials in this file.
+# Use wrangler secret put or Cloudflare Worker Secrets for production.
+
+SUPABASE_SERVICE_ROLE_KEY=REPLACE_WITH_YOUR_EXISTING_SECRET
+OPENAI_API_KEY=REPLACE_WITH_YOUR_EXISTING_SECRET_IF_USED
