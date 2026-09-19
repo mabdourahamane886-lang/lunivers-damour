@@ -222,159 +222,269 @@
     const historyDesktop = document.getElementById("historyDesktop");
     const historyMobile = document.getElementById("history");
     const sidebar = document.getElementById("sidebar");
-    const session = { messages: [], title: "Nouvelle conversation" };
-    const STORAGE_KEY = "amour-ai-chats-v2";
 
-    function loadChats(){
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
-      catch { return []; }
+    let conversationId = null;
+    let busy = false;
+
+    function setError(message){
+      emptyState.style.display = "flex";
+      emptyState.querySelector("p").textContent = message;
     }
 
-    function saveChat(){
-      const chats = loadChats();
-      const title = session.messages.find(m => m.role === "user")?.content?.slice(0,48) || "Nouvelle conversation";
-      const record = { id: Date.now(), title, messages: session.messages.slice(-20) };
-      chats.unshift(record);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(chats.slice(0,20)));
-      renderHistory();
+    function clearMessages(){
+      turns.innerHTML = "";
+      emptyState.style.display = "flex";
     }
 
-    function renderHistory(){
-      const chats = loadChats();
+    async function api(path, options = {}){
+      const response = await fetch(path, {
+        credentials: "same-origin",
+        ...options,
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {})
+        }
+      });
+      const data = await response.json().catch(() => ({}));
+      if(!response.ok){
+        const error = new Error(data?.message || data?.error || "Une erreur est survenue.");
+        error.code = data?.error;
+        throw error;
+      }
+      return data;
+    }
+
+    function renderHistory(conversations){
       [historyDesktop, historyMobile].forEach(box => {
         if(!box) return;
         box.querySelectorAll(".history-item").forEach(el => el.remove());
-        chats.forEach(chatItem => {
+        conversations.forEach(item => {
           const btn = document.createElement("button");
-          btn.className = "history-item";
+          btn.className = "history-item" + (item.id === conversationId ? " active" : "");
           btn.innerHTML = "<span>◌</span>";
           const label = document.createElement("span");
-          label.textContent = chatItem.title || "Conversation";
+          label.textContent = item.title || "Conversation";
           btn.appendChild(label);
-          btn.addEventListener("click", () => restoreChat(chatItem.id));
+          btn.addEventListener("click", () => restoreConversation(item.id));
           box.appendChild(btn);
         });
       });
     }
 
-    function restoreChat(id){
-      const item = loadChats().find(x => x.id === id);
-      if(!item) return;
-      session.messages = item.messages || [];
-      turns.innerHTML = "";
-      emptyState.style.display = session.messages.length ? "none" : "flex";
-      session.messages.forEach(m => renderTurn(m.role,m.content));
-      scrollBottom();
-      sidebar.classList.remove("open");
+    async function loadHistory(){
+      try{
+        const data = await api("/api/conversations");
+        renderHistory(data.conversations || []);
+      }catch(error){
+        if(error.code === "SUPABASE_NOT_CONFIGURED"){
+          setError("Le stockage sécurisé d’Amour AI doit encore être relié à Supabase sur Cloudflare.");
+        }else{
+          console.error(error);
+        }
+      }
     }
 
-    function renderTurn(role,text){
+    async function restoreConversation(id){
+      try{
+        const data = await api("/api/conversations?id=" + encodeURIComponent(id));
+        conversationId = data.conversation.id;
+        turns.innerHTML = "";
+        const items = data.messages || [];
+        emptyState.style.display = items.length ? "none" : "flex";
+        items.forEach(item => renderTurn(item.role, item.content));
+        renderHistory((await api("/api/conversations")).conversations || []);
+        sidebar.classList.remove("open");
+        scrollBottom();
+      }catch(error){
+        console.error(error);
+        setError("Impossible de charger cette conversation.");
+      }
+    }
+
+    function renderTurn(role, text){
       const wrap = document.createElement("div");
       wrap.className = "turn " + role;
+
       const av = document.createElement("div");
       av.className = "turn-avatar";
       av.textContent = role === "user" ? "M" : "♥";
+
       const body = document.createElement("div");
       body.className = "turn-body";
+
       const name = document.createElement("div");
       name.className = "turn-name";
       name.textContent = role === "user" ? "Vous" : "Amour AI";
+
       const content = document.createElement("div");
       content.className = "turn-text";
       content.textContent = text;
-      body.append(name,content);
+
+      body.append(name, content);
+
       if(role === "ai"){
         const actions = document.createElement("div");
         actions.className = "turn-actions";
-        [["⧉","Copier"],["♡","J’aime"],["↻","Régénérer"]].forEach(([icon,label])=>{
-          const b=document.createElement("button");
-          b.className="mini-action";b.textContent=icon;b.title=label;
-          if(label==="Copier") b.addEventListener("click",()=>navigator.clipboard?.writeText(text));
-          actions.appendChild(b);
+
+        const copy = document.createElement("button");
+        copy.className = "mini-action";
+        copy.textContent = "⧉";
+        copy.title = "Copier";
+        copy.addEventListener("click", async () => {
+          try{
+            await navigator.clipboard.writeText(text);
+            copy.textContent = "✓";
+            setTimeout(() => copy.textContent = "⧉", 1200);
+          }catch{}
         });
+
+        const like = document.createElement("button");
+        like.className = "mini-action";
+        like.textContent = "♡";
+        like.title = "J’aime";
+
+        const regenerate = document.createElement("button");
+        regenerate.className = "mini-action";
+        regenerate.textContent = "↻";
+        regenerate.title = "Régénérer";
+
+        actions.append(copy, like, regenerate);
         body.appendChild(actions);
       }
-      wrap.append(av,body);
+
+      wrap.append(av, body);
       turns.appendChild(wrap);
       return wrap;
     }
 
-    function scrollBottom(){ requestAnimationFrame(()=>chat.scrollTop=chat.scrollHeight); }
+    function scrollBottom(){
+      requestAnimationFrame(() => chat.scrollTop = chat.scrollHeight);
+    }
 
     function resetChat(){
-      session.messages=[];
-      turns.innerHTML="";
-      emptyState.style.display="flex";
-      input.value="";
+      conversationId = null;
+      clearMessages();
+      input.value = "";
       autoResize();
+      sendBtn.disabled = true;
       input.focus();
+      loadHistory();
+    }
+
+    async function deleteCurrentConversation(){
+      if(!conversationId){
+        resetChat();
+        return;
+      }
+      try{
+        await api("/api/conversations?id=" + encodeURIComponent(conversationId), { method: "DELETE" });
+      }catch(error){
+        console.error(error);
+      }
+      resetChat();
     }
 
     async function sendMessage(text){
-      text=String(text||"").trim();
-      if(!text || sendBtn.disabled) return;
+      text = String(text || "").trim();
+      if(!text || busy) return;
 
-      emptyState.style.display="none";
-      session.messages.push({role:"user",content:text});
-      renderTurn("user",text);
-      input.value=""; autoResize(); sendBtn.disabled=true; scrollBottom();
+      busy = true;
+      sendBtn.disabled = true;
+      emptyState.style.display = "none";
 
-      const loading=renderTurn("ai","Je réfléchis…");
+      renderTurn("user", text);
+      input.value = "";
+      autoResize();
+      scrollBottom();
+
+      const loading = renderTurn("ai", "Je réfléchis…");
+      scrollBottom();
+
       try{
-        const response=await fetch("/api/chat",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({messages:session.messages.slice(-8)})
+        const data = await api("/api/chat", {
+          method: "POST",
+          body: JSON.stringify({
+            conversationId,
+            message: text
+          })
         });
-        const data=await response.json().catch(()=>({}));
-        if(!response.ok) throw new Error(data?.message || data?.error || "AI_UNAVAILABLE");
-        const reply=data?.reply || data?.data?.reply || data?.result?.reply || "";
-        if(!reply) throw new Error("EMPTY_RESPONSE");
 
-        loading.querySelector(".turn-text").textContent=reply;
-        session.messages.push({role:"assistant",content:reply});
-        saveChat();
+        conversationId = data.conversationId || conversationId;
+        loading.querySelector(".turn-text").textContent = data.reply || "Je n’ai pas pu répondre.";
+        await loadHistory();
       }catch(error){
-        loading.querySelector(".turn-text").textContent="Je rencontre un problème pour répondre maintenant. Réessaie dans un instant.";
+        if(error.code === "SUPABASE_NOT_CONFIGURED"){
+          loading.querySelector(".turn-text").textContent = "Le stockage sécurisé n’est pas encore configuré sur Cloudflare. Ajoute SUPABASE_SERVICE_ROLE_KEY dans les Secrets du Worker.";
+        }else if(error.code === "RATE_LIMIT"){
+          loading.querySelector(".turn-text").textContent = "Tu as atteint la limite temporaire de demandes. Réessaie plus tard.";
+        }else{
+          loading.querySelector(".turn-text").textContent = "Je rencontre un problème pour répondre maintenant. Réessaie dans un instant.";
+        }
         console.error(error);
       }finally{
-        sendBtn.disabled=false; input.focus(); scrollBottom();
+        busy = false;
+        sendBtn.disabled = !input.value.trim();
+        input.focus();
+        scrollBottom();
       }
     }
 
     function autoResize(){
-      input.style.height="auto";
-      input.style.height=Math.min(input.scrollHeight,180)+"px";
+      input.style.height = "auto";
+      input.style.height = Math.min(input.scrollHeight, 180) + "px";
     }
 
-    document.getElementById("form").addEventListener("submit",e=>{
-      e.preventDefault();sendMessage(input.value);
+    document.getElementById("form").addEventListener("submit", event => {
+      event.preventDefault();
+      sendMessage(input.value);
     });
 
-    input.addEventListener("input",()=>{
+    input.addEventListener("input", () => {
       autoResize();
-      sendBtn.disabled=!input.value.trim();
+      if(!busy) sendBtn.disabled = !input.value.trim();
     });
 
-    input.addEventListener("keydown",e=>{
-      if(e.key==="Enter" && !e.shiftKey){e.preventDefault();document.getElementById("form").requestSubmit();}
+    input.addEventListener("keydown", event => {
+      if(event.key === "Enter" && !event.shiftKey){
+        event.preventDefault();
+        document.getElementById("form").requestSubmit();
+      }
     });
 
-    document.querySelectorAll(".suggestion").forEach(b=>b.addEventListener("click",()=>sendMessage(b.dataset.prompt)));
-    document.getElementById("newChat").addEventListener("click",resetChat);
-    document.getElementById("newChatDesktop").addEventListener("click",resetChat);
-    document.getElementById("clearChat").addEventListener("click",resetChat);
-    document.getElementById("openSidebar").addEventListener("click",()=>sidebar.classList.add("open"));
-    document.getElementById("closeSidebar").addEventListener("click",()=>sidebar.classList.remove("open"));
-    document.getElementById("voice").addEventListener("click",()=>{
-      if(!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)){ alert("La saisie vocale n’est pas disponible dans ce navigateur."); return; }
-      const Recognition=window.SpeechRecognition || window.webkitSpeechRecognition;
-      const rec=new Recognition(); rec.lang="fr-FR"; rec.interimResults=false; rec.start();
-      rec.onresult=e=>{input.value=e.results[0][0].transcript;autoResize();sendBtn.disabled=false};
+    document.querySelectorAll(".suggestion").forEach(button => {
+      button.addEventListener("click", () => sendMessage(button.dataset.prompt));
     });
-    document.getElementById("attach").addEventListener("click",()=>alert("Les pièces jointes seront ajoutées dans une prochaine version."));
-    renderHistory();
-    sendBtn.disabled=true;
+
+    document.getElementById("newChat").addEventListener("click", resetChat);
+    document.getElementById("newChatDesktop").addEventListener("click", resetChat);
+    document.getElementById("clearChat").addEventListener("click", deleteCurrentConversation);
+
+    document.getElementById("openSidebar").addEventListener("click", () => sidebar.classList.add("open"));
+    document.getElementById("closeSidebar").addEventListener("click", () => sidebar.classList.remove("open"));
+
+    document.getElementById("voice").addEventListener("click", () => {
+      if(!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)){
+        alert("La saisie vocale n’est pas disponible dans ce navigateur.");
+        return;
+      }
+      const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new Recognition();
+      recognition.lang = "fr-FR";
+      recognition.interimResults = false;
+      recognition.start();
+      recognition.onresult = event => {
+        input.value = event.results[0][0].transcript;
+        autoResize();
+        if(!busy) sendBtn.disabled = false;
+      };
+    });
+
+    document.getElementById("attach").addEventListener("click", () => {
+      alert("Les pièces jointes seront activées dans une prochaine version.");
+    });
+
+    loadHistory();
+    sendBtn.disabled = true;
   </script>
 </body>
 </html>
